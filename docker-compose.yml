@@ -1,0 +1,34 @@
+# For egen VPS: app + Caddy (automatisk HTTPS via Let's Encrypt).
+# Sett DOMAIN i .env (se .env.example) og pek DNS-en til serveren.
+services:
+  app:
+    image: ghcr.io/eirikma/goose:latest
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      DB_PATH: /data/goose.db
+    volumes:
+      - goose-data:/data
+    mem_limit: 512m
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  goose-data:
+  caddy-data:
+  caddy-config:
