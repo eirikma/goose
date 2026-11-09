@@ -1,36 +1,36 @@
-# Fly.io-konfig. Appnavnet må være globalt unikt – endre det før `fly launch`.
-app = "goose-eirikma"
-primary_region = "arn" # Stockholm
+# fly.toml app configuration file generated for goose-eirikma on 2026-11-08T20:10:23+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'goose-eirikma'
+primary_region = 'arn'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  PORT = "8080"
-  DB_PATH = "/data/goose.db"
+  DB_PATH = '/data/goose.db'
+  PORT = '8080'
+
+[[mounts]]
+  source = 'goose_data'
+  destination = '/data'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  # Stopp maskinen når det ikke er trafikk; den startes igjen ved neste forespørsel.
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
 
   [[http_service.checks]]
-    grace_period = "20s"
-    interval = "30s"
-    method = "GET"
-    path = "/health"
-    timeout = "5s"
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '20s'
+    method = 'GET'
+    path = '/health'
 
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "512mb"
-
-# SQLite-databasen ligger på et volum. Opprett det én gang før første deploy:
-#   fly volumes create goose_data --size 1 --region arn
-# (1 GB koster ca. $0.15/mnd.) Et volum hører til én maskin, så kjør bare én instans.
-[mounts]
-  source = "goose_data"
-  destination = "/data"
+  size = 'shared-cpu-1x'
+  memory = '512mb'
